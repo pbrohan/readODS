@@ -1,7 +1,7 @@
 Package: readODS
 Type: Package
 Title: Read and Write ODS Files
-Version: 1.9.0
+Version: 2.0.0
 Authors@R: 
     c(person("Gerrit-Jan", "Schutten", role = c("aut"), email = "phonixor@gmail.com"),
     person("Chung-hong", "Chan", role = c("aut", "cre"), email = "chainsawtiney@gmail.com", comment = c(ORCID = "0000-0002-6232-7530")),
@@ -34,7 +34,8 @@ Imports:
     vctrs (>= 0.4.2)
 LinkingTo: 
     cpp11
-Suggests: 
+Suggests:
+    spelling, 
     dplyr,
     testthat,
     datasets,
@@ -48,3 +49,4 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
+Language: en-GB

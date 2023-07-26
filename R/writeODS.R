@@ -37,10 +37,12 @@
 
 .cell_out <- function(type, value, con) {
     escaped_value <- .escape_xml(value)
-    cat("<table:table-cell office:value-type=\"", type,
-        "\" office:value=\"", escaped_value,
-        "\" table:style-name=\"ce1\"><text:p>", escaped_value,
-        "</text:p></table:table-cell>", 
+    cat("<table:table-cell office:value-type=\"", type, sep = "", file = con)
+    if (!type == "string") {
+        cat("\" office:value=\"", escaped_value, sep = "", file = con)
+    }
+    cat("\" table:style-name=\"ce1\"><text:p>", escaped_value,
+        "</text:p></table:table-cell>",
         sep = "",
         file = con)
 }
@@ -60,21 +62,27 @@
     types <- ifelse(types %in% c("integer", "numeric"), "float", "string")
     colj <- seq_len(NCOL(x))
     # add data
+    cols_remaining <- 16384
     if (col_names) {
-        cat("<table:table-row>", file = con)
+        cat("<table:table-row table:style-name=\"ro1\">", file = con)
         if (row_names) {
             .cell_out("string", value = "", con = con)
+            cols_remaining <- cols_remaining - 1
         }
         for (j in colj) {
             .cell_out(type = "string", value = colnames(x)[j], con = con)
+            cols_remaining <- cols_remaining -1
         }
+        cat("<table:table-cell table:number-columns-repeated=\"", cols_remaining, "\"/>", sep = "", file = con)
         cat("</table:table-row>", file = con)
     }
     for (i in seq_len(NROW(x))) {
+        cols_remaining <- 16384
         ## create a row
-        cat("<table:table-row>", file = con)
+        cat("<table:table-row table:style-name=\"ro1\">", file = con)
         if (row_names) {
             .cell_out(type = "string", value = rownames(x)[i], con = con)
+            cols_remaining <- cols_remaining - 1
         }
         for (j in colj) {
             value <- as.character(x[i, j, drop = TRUE])
@@ -84,7 +92,9 @@
                 type <- types[j]
             }
             .cell_out(type = type, value = value, con = con)
+            cols_remaining <- cols_remaining - 1
         }
+        cat("<table:table-cell table:number-columns-repeated=\"", cols_remaining, "\"/>", sep = "", file = con)
         cat("</table:table-row>", file = con)
     }
     cat("</table:table>", file = con)
